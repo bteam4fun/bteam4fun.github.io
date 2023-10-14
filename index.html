@@ -1,13 +1,67 @@
-
-<html> 
+<html>
+<title></title>
 <head>
-<title> Portfolio </title> 
-</head> 
-<body> 
-<h1> My Portfolio </h1> 
-  <a href="Website.resource/A-main-css.html">
-    My Website
-  </a>
+     <style>
+      .Red {
+         color: red;
+         font-size: 20px
+  
+     
+  </style>
+<link type="text/css" rel="stylesheet" href="main.css.html" />
+<script>
+    function banner(){ 
+var text = confirm("Did You Really Want to Click on My Banner?");
+return text; 
+}
+    function answer(){ 
+        var radio = document.getElementsByName("trivia");
+var selection = false;
+var message = "";
+for( var i = 0; i < radio.length; i++) {
+if(radio[i].value == "yes" && radio[i].checked == true) {
+selection = true; 
 
-</body> 
-</html> 
+}
+  }
+    }
+
+
+    if(selection == true) {
+message = message + "<b><p style='color:green'>Way to go!</p></b>"; 
+} else { 
+message = message + "<b><p style='color:red'>Incorrect</p></b>";
+}
+document.getElementById("response").innerHTML = message;
+</script>
+
+<a onclick="return banner()" href="http://simplystem.com"> 
+<header id="header"> Click to see where I learned to program this stuff. </header>
+</a> 
+
+</head>
+<body>
+	<div class="wrap-trivia"> 
+<h2>Lego Trivia Question:</h2>
+<p>When was the first <span class="Red">lego</span> milenium falcon released</p>
+<form>
+   <div id="response"> </div> 
+<input type="radio" name="trivia" value="no"> 2007 <br>
+<input type="radio" name="trivia" value="yes"> 1997 <br>
+<input type="radio" name="trivia" value="no"> 1978 <br>
+<input type="radio" name="trivia" value="no"> 2011 <br> 
+<input onclick="answer()" type="button" value="Click Here">
+</form>
+
+   <div class="wrap-list">
+   		<o1>
+   		  <li>Lego is awesome</li>
+   		  <li>I want to be a lego designer</li>
+   		  <li>It will hopefully work out</li>
+    <o1>	
+</div>
+
+
+
+	</body>
+	</html>
