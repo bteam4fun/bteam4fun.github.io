@@ -1,0 +1,26 @@
+
+<html>
+<head>
+<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+<script>
+function start(){
+sjs.open();
+var gameover_text = new sjs.Text("Great Work!",28,"Limegreen");
+
+var restartBtn = new sjs.Button("Main Menu", function(){
+window.location = "home.html";
+});
+
+gameover_text.centerH();
+restartBtn.center();
+menuBtn.center().offset(0,50);
+
+}
+</script>
+</head>
+<body onload="start()">
+<h1> You Win! </h1>
+<div id="target" style="overflow:hidden; background-color:black; margin:auto;"></div>
+<img src="Images/winner.gif">
+</body>
+</html>
