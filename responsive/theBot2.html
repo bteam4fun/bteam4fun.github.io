@@ -1,0 +1,48 @@
+<html>
+<title>theBot2</title>
+<head>
+	<script>
+		function theBot3() {
+			alert("Hey it's me again.");
+			alert("Could you fill out another form?");
+			alert("Once you do, click on the next link.");
+			alert("-Comet");
+		}
+		function rate(){
+var q = prompt("How much to you like rodents 1-10?");
+
+if(q <= 4){ 
+alert("I can't say I could agree with that.");
+} 
+	else if(q <= 7){
+		alert("They're a lot cooler then you think.")
+	}
+	 else{
+alert("Rodents Rock!")
+	 }
+}//function rate
+	</script>
+</head>
+<body>
+	<input type="button" onclick="theBot3()" value="Click Me!" style="color: black;">
+	<div class="col-sm-12" id="comments">
+	<div class="col-sm-12 col-md-5" id="form"> </div>
+	<br>
+	<header id="header"> Tell me more: </header>
+	<form value="form-inline">
+  <br>
+  <label>
+  </label>
+
+ <input type="text" class="form-control" id="name" placeholder="Enter your favorite animal">
+ <br>
+ <br>
+  <button style="background-color: black; color: limegreen;" onclick="rate()">How much do you like rodents?</button>
+  <br>
+  <br>
+  <a href="theBot3.html" class="link"> After you fill out the next part click me.</a>
+</a>
+</form>
+</div>
+</body>
+</html>

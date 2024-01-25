@@ -1,0 +1,80 @@
+<html>
+<title>jspractice</title>
+<head>
+	<script>
+		function start(){
+			alert("Hi there!");
+			alert("My name is Comet!");
+			alert("The AI system of Envision Studios!");
+			alert("Below my button is a form you can fill out.");
+			alert("I am sorry I will not know what you say.");
+			alert("But you can fill it out anyway.");
+			alert("-Comet");
+		}
+		function theBot(){
+			alert("Hi again");
+			alert("Did you fill out the form?");
+			alert("If you did, great job.");
+			alert("Next, click on the link to bellow to go to the next page.")
+			alert("-Comet");
+		}
+
+
+
+		function question(){
+var question = prompt("what's my favorate color?");
+
+if(question == "lime green" || question == "limegreen"|| question == "Limegreen"|| question == "limegreen" || question == "Lime Green"){
+alert("That's right");
+}
+
+else{
+alert("Nope");
+}
+
+}// end function question
+	</script>
+</head>
+<body>
+	<br>
+	<button onclick="start()" style="background-color: red;">Click me please</button>
+	<div class="row"> 
+<div class="col-sm-12" id="comments">
+<div class="col-sm-12 col-md-5" id="form"> </div>
+<br>
+<header id="header">Leave a Comment</header>
+<form value="form-inline">
+  <br>
+  <label>
+Name:
+  </label>
+  <input type="text" class="form-control" style="background-color: orange;" id="name" placeholder="Enter Name">
+  <br>
+  <br>
+  <label>
+Color:
+  </label>
+  <select class="form-control">
+<option>What's your favorite color</option>
+<option>Red</option>
+<option>Orange</option>
+<option>Yellow</option>
+<option>Green</option>
+<option>Blue</option>
+<option>Purple</option>
+<option>Other</option>
+  </select>
+</form>
+</div>
+
+<button style="background-color: yellow;" onclick="question()">Do you now what <i>my</i> favorite color is?</button>
+<br>
+<br>
+<button onclick="theBot()" style="background-color: limegreen;">After you fill out the form click me please</button>
+<br>
+<br>
+<br>
+<a href="theBot2.html" class="link"> After talk to me again click me</a>
+</a>
+</body>
+</html>
