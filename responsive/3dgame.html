@@ -19,11 +19,14 @@
       height: 100%;
       touch-action: none;
     }
-     .corner {
-     	float: left;
-     	color: white;
-     	font-size: 19pt;
-     }
+     .cornerText {
+position: absolute;
+left:10px;
+bottom:10px;
+color: black;
+font: 52px sans-serif;
+}
+
   </style>
   <script>
 
@@ -79,7 +82,7 @@ boostMesh.scaling = new BABYLON.Vector3(5, 5, 5);
 boostMesh.setEnabled(false);
 function boostAt(xFn, zFn, t) {
 var newBoost = boostMesh.clone('boost');
-newBoost.position = new BABYLON.Vector3(xFn(t), .32, zFn(t));
+newBoost.position = new BABYLON.Vector3(xFn(t), 3.2, zFn(t));
 newBoost.rotation.y = -derivAngle(t, xFn, zFn);
 newBoost.setEnabled(true);
 boosts.push(newBoost);
@@ -268,7 +271,8 @@ return wall;
 <body onload="start()">
   <canvas id="renderCanvas"></canvas>
   <div class="cornerText">
-<p></p>
+<p>Use WASD to</p>
+ <p>control your ball!</p>
   </div>
 </body>
 </html>
