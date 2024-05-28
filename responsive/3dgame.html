@@ -74,36 +74,6 @@ var _yFn = function(t) {var fns = [function(t) {return (Math.pow((1-t),3)*0.6978
       }, scene);
 
 
-      BABYLON.SceneLoader.ImportMesh(null, "resources/", "speed.obj", scene, function(meshes) {
-var boostMesh = meshes[0], boosts = [];
-boostMesh.material = new BABYLON.StandardMaterial("boostMaterial", scene);
-boostMesh.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-boostMesh.scaling = new BABYLON.Vector3(5, 5, 5);
-boostMesh.setEnabled(false);
-function boostAt(xFn, zFn, t) {
-var newBoost = boostMesh.clone('boost');
-newBoost.position = new BABYLON.Vector3(xFn(t), 3.2, zFn(t));
-newBoost.rotation.y = -derivAngle(t, xFn, zFn);
-newBoost.setEnabled(true);
-boosts.push(newBoost);
-}
-
-// Place boosts here
-boostAt(xFn, zFn, 0.5);
-
-scene.registerAfterRender(function() {
-boosts.forEach(function(boost, i){
-if(boost.intersectsMesh(playerSphere)){
-boost.dispose();
-boosts.splice(i,1);
-var vel = playerSphere.physicsImpostor.getLinearVelocity();
-playerSphere.applyImpulse(vel.normalize().scale(100), playerSphere.getAbsolutePosition());
-} else {
-boost.rotation.y += 0.01
-}
-});
-});
-});
 
  
       var camera = new BABYLON.ArcRotateCamera("Camera", 0, (3 * Math.PI) / 8, 20, playerSphere, scene);
