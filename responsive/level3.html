@@ -1,0 +1,485 @@
+<!DOCTYPE html>   
+<html>   
+<head>   
+<title> Tower Defense Test </title>   
+<style>   
+     body {   
+          background-color: darkblue;   
+     }   
+     </style>   
+<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>  
+<script>   
+  
+function start(){   
+sjs.open("target",800,500);   
+  
+var background = new sjs.Image("Images/background3.png");   
+background.setSize(2400,sjs.getHeight());   
+  
+var view = new sjs.Image("");     
+view.setSize(800,500);   
+view.moveTo(2400,500);   
+view.node.style.zIndex = -1;   
+  
+sjs.scrollable(view,background);   
+  
+sjs.keyDown(LEFT_KEY, function(){   
+     view.pushLeft();   
+});     
+  
+sjs.keyDown(RIGHT_KEY, function(){   
+     view.pushRight();   
+});     
+  
+  
+var hits = totalEnemies + bosses;
+var totalEnemies = 100; 
+     var enemyInterval = setInterval(function(){   
+     var enemy = new sjs.Image("Images/bad.gif")   
+     totalEnemies--;     
+     enemy.type = "enemy";     
+      enemy.moveTo(0,390);   
+      enemy.noBounds = true;   
+      enemy.setSize(170,170);   
+      enemy.friction = 0;     
+      enemy.pushRight(7);   
+      if(totalEnemies <= 0){   
+clearInterval(enemyInterval);   
+}     
+},1900);   
+  
+var bosses = 1;   
+var boss_amount = setInterval(function(){   
+var boss = new sjs.Image("Images/boss.gif");   
+boss.type = "boss";     
+boss.moveTo(0,245);   
+boss.noBounds = true;   
+boss.setSize(300,300);   
+boss.friction = 0;     
+boss.pushRight(1.7);   
+boss.lives = 250;   
+bosses--; 
+  
+if(bosses <= 0){   
+clearInterval(boss_amount);   
+}   
+},10000);   
+  
+  
+var tracker = new sjs.Image("");   
+tracker.type = "tracker";     
+tracker.setSize(1,sjs.getHeight());   
+tracker.moveTo(background.getWidth()/4,0);   
+  
+sjs.onHit("enemy","tracker",function(x,y){       
+var warn = new sjs.Text("ENEMY APPROACHING!",20,"red");       
+ warn.moveTo(view.x+100,sjs.getHeight()/20);         
+ y.destroy();       
+setTimeout(function(){       
+warn.destroy();         
+},2500);       
+});     
+  
+var land = new sjs.Image("");   
+land.type="land";   
+land.setSize(background.getWidth(),70);   
+land.setSize(background.getHeight(), 50);   
+land.moveTo(0,440);   
+land.node.style.zIndex = -1;   
+  
+sjs.onHit("blocker","land",function(x,y){   
+sjs.stoppedBy(x,y);     
+});   
+  
+  
+sjs.onHit("blocker","enemy",function(x,y){   
+y.moveTo(y.getX()-25,y.getY());   
+x.lives--;   
+if(x.lives==0){   
+x.destroy();   
+}     
+}); 
+  
+  
+sjs.onHit("enemy","right_screen",function(x,y){   
+window.location="gameover3.html";  
+});   
+  
+sjs.onHit("flyrange",["enemy","boss","dragonBoss"],function(x,y){     
+if(x.fire == true){     
+var gbullet = new sjs.Image("Images/bullet.png");   
+gbullet.type="bullet";   
+gbullet.moveTo(x.getX()+585,x.getY()-5);   
+gbullet.setSize(40, 10);   
+gbullet.friction=0;   
+gbullet.noBounds=true;   
+  
+var dx = y.getX()*1.1 - x.getX()-600;  
+var dy = y.getY() - x.getY();   
+var angle = Math.atan2(dy, dx);     
+  
+gbullet.pushRight(17*Math.cos(angle));     
+gbullet.pushDown(17*Math.sin(angle));     
+  
+x.fire = false;   
+setTimeout(function(){   
+gbullet.destroy();   
+x.fire=true;   
+},1200);     
+}     
+});     
+  
+  
+sjs.onHit(["blocker","gunman"],"land",function(x,y){   
+sjs.stoppedBy(x,y);     
+});     
+  
+  
+sjs.onHit("range",["enemy","boss","dragonBoss"],function(x,y){   
+  if(x.fire == true){     
+    var gbullet = new sjs.Image("Images/bullet.png")   
+    gbullet.type="bullet";   
+    gbullet.moveTo(x.getX()+260,x.getY()+10);   
+    gbullet.setSize(40, 20);   
+    gbullet.friction=0;   
+    gbullet.pushLeft(6);   
+    gbullet.noBounds=true;   
+    setTimeout(function(){   
+      gbullet.destroy();   
+      x.fire=true;   
+    },x.firerate);   
+  }     
+});     
+  
+sjs.onHit("gunman","enemy",function(x,y){   
+x.destroy();   
+x.range.destroy();   
+});     
+  
+sjs.onHit("enemy","bullet",function(x,y){   
+x.destroy();   
+y.destroy();   
+bolts += 10;   
+bolts_text.setText("Bolts Collected: " + bolts);   
+});   
+  
+bolts_text = new sjs.Text("Bolts Collected: "+bolts,18,"white");     
+bolts_text.fixed = true;   
+  
+  
+var dragon_active = false;   
+var boss_active = false;   
+  
+sjs.onHit("boss","bullet",function(x,y){     
+  y.destroy();   
+  x.lives--;   
+  if(x.lives <= 0){ 
+    x.destroy(); 
+    hits--; 
+    dragonBoss(x.x, y.y); 
+  }   
+  
+  bolts += 5;   
+  bolts_text.setText("Bolts Collected: " + bolts);   
+  if(boss_active == false){     
+    boss_active = true;   
+    setTimeout(function(){   
+      x.pushUp(7);   
+      x.bounce();     
+    },1500);   
+    setInterval(function(){   
+      if(x.lives >= 1){   
+        var boss_attack = new sjs.Image("Images/blocker.png"); 
+        boss_attack.type="boss_attack"; 
+        boss_attack.moveTo(x.getX()+50,x.getY()+Math.floor((Math.random() * 250) + 1)); 
+        boss_attack.setSize(50,15); 
+        boss_attack.friction = 0; 
+        boss_attack.pushRight(7); 
+        boss_attack.noBounds = true;   
+        var z = Math.random(); 
+        if(z < .3) { 
+          boss_attack.pushDown(2); 
+        } else if(z < .6) { 
+          boss_attack.pushUp(2); 
+        } else { 
+          boss_attack.pushRight(2); 
+          setTimeout(function(){ 
+            boss_attack.destroy(); 
+          },5000); 
+        }   
+      }   
+    },12000); 
+  }     
+});   
+  
+sjs.onHit("gunman","boss", function(x,y){ 
+x.range.destroy();
+x.destroy(); 
+});   
+  
+sjs.onHit("blocker","boss", function(x,y){ 
+x.destroy(); 
+}); 
+  
+sjs.onHit("flyguy","boss", function(x,y){ 
+x.range.destroy();
+x.destroy(); 
+});   
+  
+sjs.onHit("flyguy","boss_attack", function(x,y){ 
+x.destroy(); 
+x.flyrange.destroy(); 
+y.destroy(); 
+}); 
+  
+sjs.onHit("gunman","boss_attack", function(x,y){ 
+x.destroy(); 
+x.range.destroy(); 
+y.destroy(); 
+});   
+  
+  
+sjs.onHit("blocker","boss_attack", function(x,y){ 
+x.destroy(); 
+y.destroy(); 
+});   
+  
+
+
+sjs.onHit("blocker", "dragonBoss", function(x,y){
+x.destroy(); 
+y.destroy(); 
+});
+
+sjs.onHit("gunman", "dragonBoss", function(x,y){
+     x.destroy(); 
+     y.destroy(); 
+     x.range.destroy(); 
+});
+
+sjs.onHit("flyguy", "dragonBoss", function(x,y){
+x.destroy(); 
+y.destroy(); 
+x.range.destroy(); 
+});
+
+
+
+sjs.onHit("dDude","enemy", function(x,y){     
+y.destroy();   
+x.lives = x.lives - 1;   
+if(x.lives == 0){   
+  x.destroy();   
+}   
+});
+
+sjs.onHit("boss","dDude", function(x,y){   
+x.destroy(); 
+y.destroy();   
+});   
+  
+sjs.onHit("dragonBoss","dDude", function(x,y){   
+x.destroy();   
+y.destroy(); 
+});
+
+sjs.onHit("dDude","boss_attack", function(x,y){   
+y.destroy(); 
+x.lives = x.lives - 1; 
+if(x.lives == 0){ 
+  x.destroy(); 
+} 
+});   
+
+sjs.onHit("dragonBoss","bullet",function(x,y){     
+  y.destroy();   
+  x.lives--;   
+  if(x.lives <= 0){ 
+    x.destroy(); 
+    hits--; 
+ 
+  }   
+}); 
+  
+} //end start bracket   
+  
+var bolts = 10000000;     
+var bolts_text = "";   
+  
+function dragonBoss(x,y){ 
+  var dragon = new sjs.Image("Images/dragon.gif");   
+  dragon.type = "dragonBoss";      
+  dragon.setSize(700,700);   
+  dragon.friction = 0; 
+  dragon.noBounds = false;
+  dragon.pushRight(4);
+  dragon.moveTo(x-800, 0);
+  dragon.pushUp(5); 
+  dragon.bounce();    
+  dragon.lives = 2000;   
+} 
+
+ //dragonBoss(x.x, y.y);  
+
+function dragonDude(x,y){  
+ if(bolts > 450){   
+          bolts -= 450;   
+bolts_text.setText("bolts Collected: "+bolts); 
+  var dDude = new sjs.Image("Images/dragonDude.gif");     
+  dDude.type = "dDude";       
+  dDude.setSize(500,500);     
+  dDude.friction = 0;   
+  dDude.noBounds = true; 
+  dDude.bounce();
+  dDude.pushLeft(4); 
+  dDude.lives = 50; 
+  dDude.center().offset(-sjs.gx,10); 
+  
+  dDude.onMouseDown(function() {     
+    dDude.draggable();       
+    dDude.follow(sjs.mouse); 
+  });           
+  dDude.onMouseUp(function(){           
+    dDude.unfollow(sjs.mouse); 
+  });               
+  setTimeout(function(){       
+    dDude.undraggable();       
+  },100); 
+}
+} //dragonDude(x.x, y.y);
+  
+function blocker(){     
+     if(bolts > 30){   
+          bolts -= 30;   
+bolts_text.setText("bolts Collected: "+bolts);   
+var blocker = new sjs.Image("Images/block.png");     
+blocker.type = "blocker";     
+blocker.setHeight(170);     
+blocker.center().offset(-sjs.gx,10);     
+blocker.lives = 7;     
+blocker.onMouseDown(function(){     
+blocker.draggable();     
+blocker.follow(sjs.mouse);     
+});     
+blocker.onMouseUp(function(){     
+setTimeout(function(){     
+blocker.undraggable();     
+},100)     
+blocker.unfollow(sjs.mouse);     
+blocker.setGravity();     
+});     
+  
+  
+  }   
+} //end function blocker   
+  
+function gunman(){   
+    if(bolts >= 50){   
+         bolts -= 50;   
+     bolts_text.setText("Bolts Collected: "+bolts);   
+     var gunman = new sjs.Image("Images/gun.png");   
+     gunman.type = "gunman";   
+     gunman.setSize(80,80);   
+     gunman.center().offset(-sjs.gx,20);   
+     gunman.onMouseDown(function(){   
+     gunman.draggable();   
+     gunman.follow(sjs.mouse);   
+     });   
+          gunman.onMouseUp(function(){   
+          setTimeout(function(){   
+          gunman.undraggable();   
+          },100)   
+          gunman.unfollow(sjs.mouse);   
+          gunman.setGravity();   
+          });     
+  
+  
+gunman.center().offset(-sjs.gx,20);   
+var range = new sjs.Image("");   
+range.type = "range";   
+range.setSize(300,50);   
+range.moveTo(gunman.getX()-300,gunman.getY());     
+range.follow(gunman);     
+range.fire=true;   
+range.firerate = 1500;   
+range.node.style.zIndex = -2;   
+gunman.range = range;     
+  
+  
+} else {   
+var no_bolts = new sjs.Text("You need more Bolts! Collect More Bolts!",20,"darkred");   
+no_bolts.center().offset(-sjs.gx,-200);   
+setTimeout(function(){   
+no_bolts.destroy();     
+},2500);   
+}     
+}   
+  
+ //end function gunman   
+  
+  
+     function flyguy(){   
+          if(bolts >= 100){   
+         bolts -= 100;   
+         bolts_text.setText("Bolts Collected: "+bolts);   
+         var flyguy = new sjs.Image("Images/fly.png");     
+         flyguy.type = "flyguy";   
+          flyguy.setSize(100,100);   
+          flyguy.center().offset(-sjs.gx+250,-110);   
+          var flyrange = new sjs.Image("");   
+          flyrange.type = "flyrange";   
+          flyrange.setSize(600,450);   
+          flyrange.moveTo(flyguy.getX()-600,flyguy.getY());   
+  
+               flyrange.moveTo(flyguy.getX()-600,flyguy.getY());   
+          flyrange.follow(flyguy);     
+          flyrange.noBounds = true;   
+          flyrange.fire = true;   
+          flyrange.node.style.zIndex = -2;   
+          flyguy.flyrange = flyrange;     
+  
+               flyguy.onMouseDown(function(){   
+          flyguy.draggable();   
+          flyguy.follow(sjs.mouse);   
+          });     
+          flyguy.onMouseUp(function(){  
+          setTimeout(function(){   
+          flyguy.undraggable();   
+          },100)   
+          flyguy.unfollow(sjs.mouse);   
+          });     
+    }       
+  
+    else {   
+          var no_bolts = new sjs.Text("Your Bolts Lag! Collect More Bolts!",20,"red");   
+          no_bolts.center().offset(-sjs.gx,-200);   
+          setTimeout(function(){   
+          no_bolts.destroy();     
+          },2500);   
+    }   
+  
+  }
+ //end function flyguy   
+</script> 
+<style>   
+     .images{   
+height:50px;   
+margin:15px;
+}     
+     </style>   
+</head>   
+<body onload="start()">   
+     <center>   
+<img src="Images/block.png" class="images" onclick="blocker()">     
+<img src="Images/gun.png" class="images" onclick="gunman()">   
+<img src="Images/fly.png" class="images" onclick="flyguy()">
+<img src="Images/dragonDude.png" class="images" onclick="dragonDude()">    
+<br>   
+<input type="button" value="30 Bolts!" onclick="blocker()">   
+<input type="button" value="50 Bolts!" onclick="gunman()">   
+<input type="button" value="100 bolts!" onclick="flyguy()"> 
+<input type="button" value="450 Bolts!" onclick="dragonDude()">  
+</center>   
+<div id="target" style="overflow:hidden; background-color:limegreen; margin:auto;"></div>   
+</body>   
+</html>
