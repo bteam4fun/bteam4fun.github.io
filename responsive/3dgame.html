@@ -23,19 +23,30 @@
 position: fixed;
 left:1px;
 bottom:1px;
-color: white;
-font: 45px helvetica neue;
-margin: 0px;
-}
-.link {
-position: fixed;
-left:1px;
-top:1px;
-color: white;
+color: #ccc;
 font: 45px helvetica neue;
 margin: 0px;
 }
 
+.home-button {
+position: fixed;
+left:1px;
+top:1px;
+color: #ccc;
+font: 45px helvetica neue;
+margin: 0px;
+}
+
+.home-button:hover {
+    color: gray;
+}
+#timer {
+position: absolute;
+right:10px;
+top:10px;
+color:#ccc;
+font: 52px sans-serif;
+}
   </style>
   <script>
 
@@ -112,6 +123,12 @@ var _yFn = function(t) {var fns = [function(t) {return (Math.pow((1-t),3)*0.6978
 
       wallAt(xFn, zFn, 0.4, 6.1, scene);
 
+
+      var startTime;
+      var timer = document.querySelector('#timer');
+
+
+
       // Draw Track
 // ===== NEW CODE - Lesson 3 =====
 // replace old code: drawPoint(0, 0, 0, scene);
@@ -140,6 +157,10 @@ camera.alpha += (angle - camera.alpha) / 32;
           alert("you lose!");
           window.location.reload();
         }
+
+      if(startTime) {
+      timer.innerHTML = ((Date.now() - startTime) / 1000).toFixed(2).replace('.',':');
+      }
  
         var forward = camera.getFrontPosition(1).subtract(camera.position);
         forward.y = 0;
@@ -148,6 +169,7 @@ camera.alpha += (angle - camera.alpha) / 32;
           left = BABYLON.Vector3.TransformCoordinates(forward, BABYLON.Matrix.RotationY((3 * Math.PI) / 2)),
           right = BABYLON.Vector3.TransformCoordinates(forward, BABYLON.Matrix.RotationY(Math.PI / 2));
         if (keys.w) {
+          if(!startTime){ startTime = Date.now(); }
           playerSphere.applyImpulse(forward, playerSphere.getAbsolutePosition());
         }
         if (keys.s) {
@@ -254,8 +276,7 @@ return wall;
             <br>
               The camera angle will control itself!
   </div>
-	 <div class="link">
-    <a href="https://bteam4fun.github.io">Home</a>
-  </div>
+  <a href="https://bteam4fun.github.io" class="home-button">Home</a>
+  <div id="timer">00:00</div>
 </body>
 </html>
