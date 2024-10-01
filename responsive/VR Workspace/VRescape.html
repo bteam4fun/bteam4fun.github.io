@@ -44,7 +44,15 @@ setActiveItem(this.el);
 
 
     
-
+AFRAME.registerComponent('door-listener', {
+init: function () {
+var el = this.el;
+this.el.addEventListener('click', function (evt) {
+var camera = document.querySelector('a-camera');
+el.dispatchEvent(new Event('open-door'));
+});
+}
+});
 
     
 }
@@ -63,15 +71,7 @@ item.setAttribute('scale', '0.1 0.1 0.1');
 item.dispatchEvent(new Event('activate-item'));
 }
 
-        AFRAME.registerComponent('door-listener', {
-init: function () {
-var el = this.el;
-this.el.addEventListener('click', function (evt) {
-var camera = document.querySelector('a-camera');
-el.dispatchEvent(new Event('open-door'));
-});
-}
-});
+        
 
     </script>
 </head>
