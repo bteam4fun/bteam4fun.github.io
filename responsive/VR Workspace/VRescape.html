@@ -49,7 +49,11 @@ init: function () {
 var el = this.el;
 this.el.addEventListener('click', function (evt) {
 var camera = document.querySelector('a-camera');
+var key = camera.querySelector('#active-item[type="key"]');
+if(key) {
+key.parentNode.removeChild(key);
 el.dispatchEvent(new Event('open-door'));
+}
 });
 }
 });
