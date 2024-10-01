@@ -41,6 +41,21 @@ click: function(e){
 var activeItem = document.querySelector('#active-item');
 if(activeItem !== this.el) {
 setActiveItem(this.el);
+
+
+    
+AFRAME.registerComponent('door-listener', {
+init: function () {
+var el = this.el;
+this.el.addEventListener('click', function (evt) {
+var camera = document.querySelector('a-camera');
+el.dispatchEvent(new Event('open-door'));
+});
+}
+});
+
+
+    
 }
 },
 remove: function() {
