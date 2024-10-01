@@ -40,6 +40,30 @@ el.dispatchEvent(new Event('open-door'));
 });
 }
 });
+        AFRAME.registerComponent('can-pickup', {
+init: function () {
+this.click = this.click.bind(this);
+this.el.addEventListener('click', this.click);
+},
+click: function(e){
+var activeItem = document.querySelector('#active-item');
+if(activeItem !== this.el) {
+setActiveItem(this.el);
+}
+},
+remove: function() {
+this.el.removeEventListener('click', this.click);
+}
+});
+        function setActiveItem(item) {
+item.setAttribute('id', 'active-item');
+var camera = document.querySelector('a-camera');
+camera.appendChild(item);
+item.setAttribute('position', '-0.25 0 -0.5');
+item.setAttribute('rotation', '-90 0 0');
+item.setAttribute('scale', '0.1 0.1 0.1');
+item.dispatchEvent(new Event('activate-item'));
+}
     </script>
 </head>
 <body>
@@ -49,6 +73,7 @@ el.dispatchEvent(new Event('open-door'));
             <img id="carpet" src="resources/carpet.jpg">
             <a-asset-item id="sofa" src="resources/burlap_sofa.gltf"></a-asset-item>
             <a-asset-item id="door" src="resources/door.gltf"></a-asset-item>
+            <a-asset-item id="key" src="resources/key.gltf"></a-asset-item>
         </a-assets>
 
         <a-light type="directional" color="#fff" intensity="4.7" position="-1 10 1"></a-light>
@@ -76,9 +101,9 @@ el.dispatchEvent(new Event('open-door'));
         <a-gltf-model scale="1.7 1.7 1.7" position="0.2 1.5 -5.6" 
             rotation="0 0 0" src="#wall" shadow></a-gltf-model>
         <a-plane position="0 1.5 -6" src="#carpet" repeat="90 90" 
-            rotation="-90 0 0" width="8" height="16" color="#120101" shadow></a-plane>
+            rotation="-90 0 0" width="8" height="16" color="#361d02" shadow></a-plane>
         <a-plane position="4 1.5 -6" src="#carpet" repeat="90 90"
-            rotation="-90 0 0" width="8" height="16" color="#120101" shadow></a-plane>
+            rotation="-90 0 0" width="8" height="16" color="#361d02" shadow></a-plane>
         
 
         <!-- GLTF Models -->
@@ -91,6 +116,8 @@ el.dispatchEvent(new Event('open-door'));
         <a-animation begin="open-door" attribute="rotation" to="0 -50 0" dur="1500"></a-animation>
 <a-animation begin="open-door" attribute="position" to="-2.05 1.5 -5.5" dur="1500"></a-animation>
     </a-gltf-model>
+        <a-gltf-model type="key" position="-3 1.5 0.1" rotation="0 50 0" scale="0.1 0.1 0.1"
+            src="#key" shadow can-pickup fusable></a-gltf-model>
 
 
     </a-scene>
