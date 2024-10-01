@@ -44,6 +44,7 @@ setActiveItem(this.el);
 
 
     
+
 AFRAME.registerComponent('door-listener', {
 init: function () {
 var el = this.el;
@@ -53,7 +54,7 @@ var key = camera.querySelector('#active-item[type="key"]');
 if(key) {
 key.parentNode.removeChild(key);
 el.dispatchEvent(new Event('open-door'));
-}
+} 
 });
 }
 });
