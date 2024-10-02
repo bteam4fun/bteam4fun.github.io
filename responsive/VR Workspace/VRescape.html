@@ -32,31 +32,42 @@ this.el.removeEventListener('fusing', this.fusing);
 });
 
 
-        AFRAME.registerComponent('can-pickup', {
-init: function () {
-this.click = this.click.bind(this);
-this.el.addEventListener('click', this.click);
-},
-click: function(e){
-var activeItem = document.querySelector('#active-item');
-if(activeItem !== this.el) {
-setActiveItem(this.el);
-
-
-    
+       AFRAME.registerComponent('can-pickup', {
+    init: function () {
+        this.click = this.click.bind(this);
+        this.el.addEventListener('click', this.click);
+    },
+    click: function(e) {
+        var activeItem = document.querySelector('#active-item');
+        if (activeItem !== this.el) {
+            // Ensure setActiveItem is defined before calling it
+            if (typeof setActiveItem === 'function') {
+                setActiveItem(this.el);
+            } else {
+                console.warn('setActiveItem function is not defined.');
+            }
+        }
+    }
+});
 
 AFRAME.registerComponent('door-listener', {
-init: function () {
-var el = this.el;
-this.el.addEventListener('click', function (evt) {
-var camera = document.querySelector('a-camera');
-var key = camera.querySelector('#active-item[type="key"]');
-if(key) {
-key.parentNode.removeChild(key);
-el.dispatchEvent(new Event('open-door'));
-} 
-});
-}
+    init: function () {
+        var el = this.el;
+        this.el.addEventListener('click', function (evt) {
+            var camera = document.querySelector('a-camera');
+            if (camera) {
+                var key = camera.querySelector('#active-item[type="key"]');
+                if (key) {
+                    key.parentNode.removeChild(key);
+                    el.dispatchEvent(new Event('open-door'));
+                } else {
+                    console.warn('No key found in the active item.');
+                }
+            } else {
+                console.warn('No camera found in the scene.');
+            }
+        });
+    }
 });
 
     
