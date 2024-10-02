@@ -40,7 +40,6 @@ this.el.removeEventListener('fusing', this.fusing);
     click: function(e) {
         var activeItem = document.querySelector('#active-item');
         if (activeItem !== this.el) {
-            // Ensure setActiveItem is defined before calling it
             if (typeof setActiveItem === 'function') {
                 setActiveItem(this.el);
             } else {
