@@ -42,34 +42,11 @@ var key = camera.querySelector('#active-item[type="key"]');
 if(key) {
 key.parentNode.removeChild(key);
 el.dispatchEvent(new Event('open-door'));
-} //<--- Don't forget about this closing bracket
+}
 });
 }
 });
 
-AFRAME.registerComponent('door-listener', {
-    init: function () {
-        var el = this.el;
-        this.el.addEventListener('click', function (evt) {
-            var camera = document.querySelector('a-camera');
-            if (camera) {
-                var key = camera.querySelector('#active-item[type="key"]');
-                if (key) {
-                    key.parentNode.removeChild(key);
-                    el.dispatchEvent(new Event('open-door'));
-                } else {
-                   
-                }
-            } else {
-               
-            }
-        });
-    }
-});
-
-    
-}
-},
 remove: function() {
 this.el.removeEventListener('click', this.click);
 }
@@ -101,11 +78,12 @@ item.dispatchEvent(new Event('activate-item'));
         <a-light type="point" color="#fff" intensity=".7" position="-1 10 1"></a-light>
         <a-light type="point" color="#fff" intensity=".7" position="1 10 -1"></a-light>
         <a-light type="directional" color="#fff" intensity=".35" position="1 5 -1"></a-light>
-        <a-light type="point" color="#fff" intensity=".7" position="-1 8 1"></a-light>
-        <a-light type="point" color="#fff" intensity=".7" position="-1 12 1"></a-light>
-
+        
+        
         <a-sky color="#C3A074"></a-sky>
 
+
+        
         <a-camera position="0 1.9 0">
             <a-cursor fuse="true" fuse-timeout="750"></a-cursor>
             <a-animation begin="start-fusing" easing="ease-in" attribute="scale"
