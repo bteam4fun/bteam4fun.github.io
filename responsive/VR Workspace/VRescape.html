@@ -61,10 +61,10 @@ AFRAME.registerComponent('door-listener', {
                     key.parentNode.removeChild(key);
                     el.dispatchEvent(new Event('open-door'));
                 } else {
-                    console.warn('No key found in the active item.');
+                   
                 }
             } else {
-                console.warn('No camera found in the scene.');
+               
             }
         });
     }
