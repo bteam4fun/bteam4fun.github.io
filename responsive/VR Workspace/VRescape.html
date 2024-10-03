@@ -62,6 +62,31 @@ item.dispatchEvent(new Event('activate-item'));
 
         
 
+AFRAME.registerComponent('can-pickup', {
+init: function () {
+this.click = this.click.bind(this);
+this.el.addEventListener('click', this.click);
+},
+click: function(e){
+var activeItem = document.querySelector('#active-item');
+if(activeItem !== this.el) {
+setActiveItem(this.el);
+}
+},
+remove: function() {
+this.el.removeEventListener('click', this.click);
+}
+});
+
+function setActiveItem(item) {
+item.setAttribute('id', 'active-item');
+var camera = document.querySelector('a-camera');
+camera.appendChild(item);
+item.setAttribute('position', '-0.25 0 -0.5');
+item.setAttribute('rotation', '-90 0 0');
+item.setAttribute('scale', '0.1 0.1 0.1');
+item.dispatchEvent(new Event('activate-item'));
+}
     </script>
 </head>
 <body>
