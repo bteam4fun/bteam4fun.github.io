@@ -68,7 +68,59 @@
         this.el.removeEventListener('click', this.click);
       }
     });
- 
+//inventory code
+
+AFRAME.registerComponent('inv-slot', {
+init: function () {
+var el = this.el;
+this.click = this.click.bind(this);
+this.el.addEventListener('click', this.click);
+},
+click: function(e){
+if(e.target !== this.el) { return; }
+var activeItem = document.querySelector('#active-item');
+var slotItem = this.el.children[0];
+if(activeItem) {
+if(this.el.children.length === 0) {
+setSlotItem(this.el, activeItem)
+} else {
+var slotItem = this.el.children[0];
+setSlotItem(this.el, activeItem);
+setActiveItem(slotItem);
+}
+} else if(slotItem) {
+setActiveItem(slotItem);
+}
+},
+remove: function() {
+this.el.removeEventListener('click', this.click);
+}
+});
+
+AFRAME.registerComponent('follow-feet', {
+schema: {
+x: {type: 'number', default: 0},
+z: {type: 'number', default: 0}
+},
+init: function () {
+this.camera = document.querySelector('a-camera');
+this.componentChanged = this.componentChanged.bind(this);
+this.camera.addEventListener('componentchanged', this.componentChanged);
+this.componentChanged();
+},
+componentChanged: function(evt){
+if(evt && evt.detail.name !== 'position') { return; }
+var position = this.camera.getAttribute('position');
+if(position) {
+this.el.setAttribute('position', (position.x + this.data.x) + ' ' + (position.y - 1) + ' ' + (position.z + this.data.z));
+}
+},
+remove: function() {
+this.camera.removeEventListener('componentchanged', this.componentChanged);
+}
+});      
+
+//end inventory code      
     AFRAME.registerComponent('flashlight-listener', {
       init: function () {
         this.activate = this.activate.bind(this);
@@ -141,9 +193,9 @@
       <a-plane position="0 9 -6" color="#878984" rotation="-270 0 0" width="8" height="16" color="#7BC8A4" shadow></a-plane>
  
       <!-- Side walls -->
-      <a-plane position="4 5.5 -6" rotation="0 -90 0" width="16" height="8" color="coral" shadow></a-plane>
-      <a-plane position="-4 5.5 -6" rotation="0 90 0" width="16" height="8" color="coral" shadow></a-plane>
-       <a-plane position="-6 5.5 -6" rotation="0 90 0" width="16" height="8" color="coral" shadow></a-plane>
+      <a-box position="4 5.5 -6" rotation="0 -90 0" width="16" height="8" color="coral" shadow></a-box>
+      <a-box position="-4 5.5 -6" rotation="0 90 0" width="16" height="8" color="coral" shadow></a-box>
+       <a-box position="-6 5.5 -6" rotation="0 90 0" width="16" height="8" color="coral" shadow></a-box>
  
       <a-gltf-model position="-3.7 1.5 -2" scale="1.7 1.7 1.7" rotation="0 90 0" src="#sofa" shadow></a-gltf-model>
       <a-gltf-model scale="1.7 1.7 1.7" position="0.2 1.5 -5.6" rotation="0 0 0" src="#wall" shadow></a-gltf-model>
@@ -154,6 +206,14 @@
       </a-gltf-model>
  
  <!-- ===== NEW CODE - Lesson 4 ===== -->
+
+<-- Inventory Slots-->
+<a-plane id="inv-slot-1" rotation="-90 0 0" width="0.2" height="0.2" color="#eee" follow-feet="x: 0.2;" inv-slot shadow></a-plane>
+<a-plane id="inv-slot-2" rotation="-90 0 0" width="0.2" height="0.2" color="#eee" follow-feet="x: -0.2;" inv-slot shadow></a-plane>
+<a-plane id="inv-slot-3" rotation="-90 0 0" width="0.2" height="0.2" color="#eee" follow-feet="z: 0.2;" inv-slot shadow></a-plane>
+<a-plane id="inv-slot-4" rotation="-90 0 0" width="0.2" height="0.2" color="#eee" follow-feet="z: -0.2;" inv-slot shadow></a-plane>
+
+      
       <a-gltf-model type="key" can-pickup fusable position="2.1 1.5 -3.5" rotation="0 50 0" scale="0.1 0.1 0.1"
                     src="#key" shadow></a-gltf-model>
  
