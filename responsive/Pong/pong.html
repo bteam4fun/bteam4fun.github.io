@@ -26,7 +26,7 @@ ball.center();
 ball.friction = 0;
 ball.bounce();
 ball.pushRight(5);
-ball.pushUp(7);
+ball.pushUp(10);
 
 
 //Paddle 1 Code
@@ -58,12 +58,13 @@ paddle2.pushRight(1);
 //Sound Code
 var soundEffect = new Audio ("Music/pop.mp3");
 
-sjs.onHit("ball","paddle", function(ball,paddle){
-score = score + 1;
-score_txt.setText("Score: "+score);
-soundEffect.play();
-var pushUp = pushUp + 30;
-sjs.bounceOff(ball,paddle);
+sjs.onHit("ball", "paddle", function(ball, paddle) {
+    score = score + 1;
+    score_txt.setText("Score: " + score);
+    soundEffect.play();
+    ballSpeed *= 1.1;
+    ball.setSpeed(ballSpeed);
+    sjs.bounceOff(ball, paddle);
 });
 
 
