@@ -58,13 +58,12 @@ paddle2.pushRight(1);
 //Sound Code
 var soundEffect = new Audio ("Music/pop.mp3");
 
-sjs.onHit("ball", "paddle", function() {
-    score = score + 1;
-    score_txt.setText("Score: " + score);
-    soundEffect.play();
-    ballSpeed *= 1.1;
-    ball.setSpeed(ballSpeed);
-    sjs.bounceOff(ball, paddle);
+sjs.onHit("ball","paddle", function(ball,paddle){
+score = score + 1;
+score_txt.setText("Score: "+score);
+soundEffect.play();
+var pushUp = pushUp + 10;
+sjs.bounceOff(ball,paddle);
 });
 
 
