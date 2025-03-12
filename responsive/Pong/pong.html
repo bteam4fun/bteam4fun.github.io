@@ -58,7 +58,7 @@ paddle2.pushRight(1);
 //Sound Code
 var soundEffect = new Audio ("Music/pop.mp3");
 
-sjs.onHit("ball", "paddle", function(ball, paddle) {
+sjs.onHit("ball", "paddle", function() {
     score = score + 1;
     score_txt.setText("Score: " + score);
     soundEffect.play();
