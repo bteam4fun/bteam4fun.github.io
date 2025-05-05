@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> You Won </title>
+<style>
+	.center{
+		text-align: center;
+	}
+</style>
+<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+<script>
+function start(){
+sjs.open();
+
+var win_txt = new sjs.Text("Well Done!", 44, "limegreen");
+win_txt.center().offset(0,-80);
+
+var menuBtn = new sjs.Button("Game Menu", function(){
+window.location = "https://bteam4fun.github.io/responsive/game_reference.html";
+});
+menuBtn.center();
+
+var score_txt = new sjs.Text("Score: 0", 21, "limegreen");
+score_txt.setText("Score: " +localStorage.getItem("score"));
+score_txt.center().offset(0, -40)
+}//closing start bracket
+</script>
+</head>
+<body onload="start()">
+<div class="center">
+<h1> You Won </h1>
+</div>
+<div id="target" style="margin:auto;background:grey;"></div>
+</body>
+</html>
