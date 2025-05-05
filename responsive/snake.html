@@ -11,6 +11,7 @@
 </style>
     <canvas id="canvas" width="1024" height="1024"></canvas>
     <script>
+      alert('Use WASD to move and collect the blue cubes. Do not run into the wall!');
       var game = {
         tickNumber: 0,
         timer: null,
@@ -41,6 +42,7 @@
           var result = snake.move();
           if(result == "gameover") {
             alert("Game over! Player Scored: " + game.score);
+            window.location = "https://bteam4fun.github.io/responsive/snake.html";
             return;
           }
           graphics.drawGame();
