@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+<head>
+  <title>Curve Editor</title>
+
+  <style>
+    .dot {
+      fill: lightblue;
+      stroke: #999999;
+    }
+    #rangeDot { fill: red; stroke: red; }
+  </style>
+
+</head>
+<body>
+  <h1>Curve Editor</h1>
+  <p>Click and drag to edit points, hold the Ctrl key and click to add a new point.</p>
+  <p>Delete a point by selecting it and pressing the Delete (or Backspace) key.</p>
+  <svg width="400" height="400" id="svg" style="display:inline-block;vertical-align:top">
+    <rect width="400" height="400" style="stroke: rgb(153, 153, 153); fill: rgb(246, 246, 246);"></rect>
+  </svg>
+  <div style="display:inline-block;">
+    <button style="margin: 20px;display:block" onclick="showCode()">Generate Code</button>
+    <div id="code" style="display:inline-block;vertical-align:middle"></div>
+
+    <button style="margin: 20px;display:block" id="rangeBtn" onclick="showRange()">Show Range</button>
+    <div id="range"></div>
+  </div>
+
+  <script>
+
+    var svg = document.querySelector('#svg'), selected, dragging,
+        curve = {start: [10, 80], init: [40,10], segments: [{a: [65, 10], b: [90, 80]}]};
+
+    // Draw initial curves
+    drawCurve(curve);
+
+    function generateCode(xScale, yScale) {
+      if(!xScale) { xScale = 1; }
+      if(!yScale) { yScale = 1; }
+      var result = curve.segments.reduce(function(s, seg){
+        var xFn = bezierFn(s.start[0]/xScale, s.init[0]/xScale, seg.a[0]/xScale, seg.b[0]/xScale),
+            yFn = bezierFn(s.start[1]/yScale, s.init[1]/yScale, seg.a[1]/yScale, seg.b[1]/yScale);
+        return {
+          start: seg.b, init: mirror(seg.a, seg.b),
+          xFns: s.xFns.concat([xFn]), yFns: s.yFns.concat([yFn])
+        };
+      }, {start: curve.start, init: curve.init, xFns: [], yFns: []});
+      return {xFn: combineFns(result.xFns), yFn: combineFns(result.yFns)};
+    }
+
+    function showCode() {
+      var r = svg.getBoundingClientRect(),
+          result = generateCode(r.width,r.height);
+      document.querySelector('#code').innerHTML = '<textarea '+
+        'style="width:500px;max-width:90vw" rows="14">'+
+        'var _xFn = '+result.xFn+';\n'+
+        'var _yFn = '+result.yFn+';\n'
+        '</textarea>';
+    }
+
+    svg.addEventListener('click', function(e){ dragging = false; });
+
+    svg.addEventListener('mousedown', function(e){
+      var r = svg.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      selectPoint(x,y);
+      if(selected){ dragging = true; }
+      else if(e.ctrlKey) {
+        curve.segments.push({a: [x,y], b: [x,y]});
+        drawCurve(curve);
+        selectPoint(x,y);
+      }
+    });
+
+    svg.addEventListener('mousemove', function(e){
+      if(!dragging || !selected) return;
+      var r = svg.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      selected.pointNode.setAttribute('transform', 'translate('+x+','+y+')');
+      selected.point[0] = x; selected.point[1] = y;
+      selected.curveNode.setAttribute('d', formatCurve(curve));
+      hideRange();
+    });
+
+    window.addEventListener('keydown', function(e){
+      if((e.key === 'Delete' || e.key === 'Backspace')
+         && curve.segments.length > 1 && selected.i) {
+        curve.segments.splice(selected.i, 1);
+        drawCurve(curve);
+      }
+    });
+
+    svg.addEventListener('dragstart', function(e){e.preventDefault();})
+
+    function drawCurve(curve) {
+      svg.querySelectorAll('circle,path').forEach(function(c){c.remove();});
+      svg.innerHTML += (
+        drawPath(curve) +
+        drawPoint(curve.start, 'start') +
+        drawPoint(curve.init, 'init') +
+        curve.segments.reduce(function(s, seg, i){
+          return s + drawPoint(seg.a, 'segments-'+i+'-a') +
+                     drawPoint(seg.b, 'segments-'+i+'-b');
+        }, '')
+      );
+    }
+    function drawPath(c) {
+      return '<path d="'+formatCurve(c)+'" stroke="black" fill="transparent"/>';
+    }
+    function drawPoint(p, id, r) {
+      return '<circle id="'+id+'" r="'+(r||5)+'" transform="translate('+p[0]+','+p[1]+')" />';
+    }
+    function curvePoints(c) {
+      return c.segments.map(function(s){ return [s.a,s.b]; })
+        .reduce(function(a,b){return a.concat(b);}, [])
+        .concat([c.start, c.init]);
+    }
+    function dist(p1,p2) {
+      return Math.sqrt(Math.pow(p1[0]-p2[0],2)+Math.pow(p1[1]-p2[1],2));
+    }
+    function selectedNode() { return selected.pointNode; }
+    function selectPoint(x,y) {
+      selected = curvePoints(curve).reduce(function(s,p){
+        var pointNode = svg.querySelector('circle[transform="translate('+p[0]+','+p[1]+')"]'),
+            i = pointNode.id.split('-')[1];
+        return s || ((dist(p, [x,y]) <= 5) ? {
+          point: p, i: i,
+          pointNode: pointNode,
+          curveNode: svg.querySelector('path')
+        } : s);
+      }, null);
+      svg.querySelectorAll('.dot').forEach(function(s){ s.classList.remove('dot'); });
+
+      if(selected) {
+        selectedNode().classList.add('dot');
+      }
+    }
+    function formatCurve(c) {
+      return 'M' + c.start[0] + ' ' + c.start[1] + ' ' +
+             'C ' + c.init[0] + ' ' + c.init[1] + ', ' + c.segments[0].a[0] +
+                 ' ' + c.segments[0].a[1] + ', ' + c.segments[0].b[0] + ' ' +
+                 c.segments[0].b[1] +
+             c.segments.slice(1).reduce(function(s,seg){
+               return s + ' S ' + seg.a[0] + ' ' + seg.a[1] + ', ' + seg.b[0] +
+               ' ' + seg.b[1]
+             },'');
+    }
+
+    function mirror(a, b) {
+      var dx = b[0]-a[0], dy = b[1]-a[1];
+      return [b[0]+dx,b[1]+dy];
+    }
+
+    function bezierFn(a, b, c, d) {
+      return 'function(t) {'+
+        'return (Math.pow((1-t),3)*'+a+')+'+
+               '(3*t*Math.pow((1-t),2)*'+b+')+'+
+               '(3*Math.pow(t,2)*(1-t)*'+c+')+'+
+               '(Math.pow(t,3)*'+d+')'+
+      '}';
+    }
+
+    function graph(xFn, yFn, res) {
+      for(var i = 0; i <= 1; i += (1/res)) {
+        svg.innerHTML += drawPoint([xFn(i), yFn(i)], '', 2);
+      }
+    }
+
+    function combineFns(fns) {
+      return 'function(t) {'+
+        'var fns = ['+fns.join(',')+'];'+
+        'var i = Math.max(0,Math.min('+(fns.length-1)+', Math.floor(t * '+fns.length+')));'+
+        'return fns[i]((t - (i/'+fns.length+')) * '+fns.length+');'+
+      '}';
+    }
+
+    function showRange() {
+      document.querySelector('#range').innerHTML = ''+
+        '<label></label><br/>'+
+        '<input type="range" oninput="updateRange()" value="0" min="0" max="1" step="0.01">'
+      var rangeBtn = document.querySelector('#rangeBtn');
+      rangeBtn.innerHTML = 'Hide Range'
+      rangeBtn.onclick = hideRange;
+      moveRangeDot(0);
+    }
+
+    function hideRange() {
+      var range = document.querySelector('#range'),
+          rangeBtn = document.querySelector('#rangeBtn'),
+          rangeDot = document.querySelector('#rangeDot');
+      range.innerHTML = '';
+      if(rangeDot) { rangeDot.remove(); }
+      rangeBtn.innerHTML = "Show Range";
+      rangeBtn.onclick = showRange;
+    }
+
+    function moveRangeDot(t) {
+      var r = generateCode(),
+          xFn = (new Function('return '+r.xFn))(),
+          yFn = (new Function('return '+r.yFn))(),
+          x = xFn(t), y = yFn(t),
+          rangeDot = document.querySelector('#rangeDot'),
+          rangeLabel = document.querySelector('#range label');
+      if(!rangeDot) {
+        svg.innerHTML += '<circle id="rangeDot" r="3" transform="translate('+x+','+y+')"/>';
+      } else {
+        rangeDot.setAttribute('transform', 'translate('+x+','+y+')');
+      }
+      if(rangeLabel) {
+        rangeLabel.innerHTML = "t: "+t.toFixed(2);
+      }
+    }
+
+    function updateRange() {
+      var range = document.querySelector('#range input');
+      if(range) { moveRangeDot(parseFloat(range.value)); }
+    }
+  </script>
+</body>
+</html>
