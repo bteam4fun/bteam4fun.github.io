@@ -79,12 +79,12 @@
         this.moveFloor();
       },
       draw: function() {
-        ctx.fillStyle = "cyan";
+        ctx.fillStyle = "gray";
         ctx.fillRect (0, 0, this.width, this.height);
         for(index in this.floorTiles) {
           var tile = this.floorTiles[index];
           var y = world.height - tile.height;
-          ctx.fillStyle = "indigo";
+          ctx.fillStyle = "black";
           ctx.fillRect(tile.x, y, tile.width, tile.height);
         }
         ctx.fillStyle = "white";
@@ -138,7 +138,7 @@
         this.applyGravity();
       },
       draw: function() {
-        ctx.fillStyle = "mediumvioletred";
+        ctx.fillStyle = "mediumspringgreen";
         ctx.fillRect(player.x, player.y - player.height, this.height, this.width);
       }
     };
